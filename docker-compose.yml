@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  frontend:
+
+  backend:
+
+  postgres:
+
+  nginx:
+    depends_on:
+      - frontend
+      - backend
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - "80:80"
