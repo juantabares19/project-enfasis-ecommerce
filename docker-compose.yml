@@ -2,18 +2,54 @@ version: "3.9"
 
 services:
   frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ecommerce_frontend
+    restart: always
+    command: npm run start
+    ports:
+      - "3000:3000"  # Mapea el puerto 3000 del host al 3000 del contenedor
+    depends_on:
+      - backend
 
   backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ecommerce_backend
+    restart: always
+    command: python main.py
+    ports:
+      - "8000:8000"  # Mapea el puerto 8000 del host al 8000 del contenedor
+    depends_on:
+      - postgres
 
   postgres:
+    image: postgres:15
+    container_name: ecommerce_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ecommerce
+    ports:
+      - "5432:5432"  # Opcional: para conectar desde DBeaver o pgAdmin fuera de Docker
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   nginx:
+    container_name: ecommerce_nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
     depends_on:
       - frontend
       - backend
     restart: always
-    build:
-      dockerfile: Dockerfile
-      context: ./nginx
-    ports:
-      - "80:80"
+    tty: true
+
+volumes:
+  postgres_data:
