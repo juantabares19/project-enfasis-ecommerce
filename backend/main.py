@@ -1,13 +1,21 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-# ESTA ES LA LÍNEA QUE TE FALTA O TIENE OTRO NOMBRE
 app = FastAPI() 
+
+# Configuración de CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite que cualquier origen acceda (puedes restringirlo luego)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"Hello": "World", "status": "Conectado a Render"}
 
 if __name__ == "__main__":
     import uvicorn
-    # Aquí "main:app" busca el archivo "main" y la variable "app"
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
